@@ -23,7 +23,7 @@ file(GLOB SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 # cpplint
 set(CMAKE_CXX_CPPLINT
   cpplint
-  --filter=-legal/copyright,-build/include_order,-runtime/references
+  --filter=-legal/copyright,-build/include_order,-runtime/references,-build/c++11
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
