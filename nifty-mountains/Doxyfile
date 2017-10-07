@@ -13,7 +13,7 @@ MACRO_EXPANSION = YES
 
 DISTRIBUTE_GROUP_DOC = YES
 
-INPUT = ./src/ ./inc/
+INPUT = ./src/ ./inc/ ./mainpage.dox
 
 GENERATE_HTML = YES
 HTML_FILE_EXTENSION = .html

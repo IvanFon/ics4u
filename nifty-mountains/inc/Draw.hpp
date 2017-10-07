@@ -43,7 +43,6 @@ std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row, 
 /// @param algo Algorithm to use
 /// @param pathsBitmap Bitmap to draw paths to
 /// @param bestBitmap Bitmap to draw best path to
-/// @param rd Random number generator engine
 void drawAllPaths(const apmatrix<int> &matrix, ALGORITHM algo, ALLEGRO_BITMAP *pathsBitmap, ALLEGRO_BITMAP *bestBitmap);
 
 #endif  // INC_DRAW_HPP_

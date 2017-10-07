@@ -40,6 +40,7 @@ bool loadFonts();
 /// @param fileHeight Height of file
 /// @param algo Current algorithm
 /// @param drawMap If the map should be drawn
+/// @param mapColours If the map should be coloured
 /// @param drawPaths If paths should be drawn
 /// @param drawBestPath If best path should be drawn
 void drawUI(const std::string &filename, const int fileWidth, const int fileHeight,

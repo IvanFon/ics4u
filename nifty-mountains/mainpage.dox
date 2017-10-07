@@ -1,0 +1,16 @@
+/**
+@mainpage Nifty Mountains Documentation
+@author Ivan Fonseca
+
+Documentation for my ICS4U Nifty Mountains project.
+
+@section usage Usage
+When the program launches, a file picker dialog appears. Choose the text
+file that contains the map you want to load. The program will draw the map
+and calculate paths, showing the interface when done. You can then use the
+buttons on the right to toggle algorithms and display settings.
+
+@section docs Code Documentation
+To view code documentation, navigate to the file you want using the
+"Files" menu item at the top of the page.
+*/
