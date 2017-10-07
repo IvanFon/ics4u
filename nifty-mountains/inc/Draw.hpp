@@ -15,6 +15,11 @@
 
 #include <apmatrix.h>
 
+enum ALGORITHM {
+    NORMAL,
+    DOWNHILL
+};
+
 /// @brief Initialize Allegro and Allegro addons
 /// @return true on success, false otherwise
 bool initAllegro();
@@ -27,15 +32,17 @@ void drawMatrix(const apmatrix<int> &matrix, int min, int max);
 /// @brief Draws lowest elevation path
 /// @param matrix Matrix to draw from
 /// @param row Row to start from
+/// @param algo Algorithm to use
 /// @return Total elevation change and path taken
 // Tuple lets you return two objects from a function
-std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row);
+std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row, ALGORITHM algo);
 
 /// @brief Draw all lowest elevation paths
 /// @param matrix Matrix to draw from
+/// @param algo Algorithm to use
 /// @param pathsBitmap Bitmap to draw paths to
 /// @param bestBitmap Bitmap to draw best path to
 /// @param rd Random number generator engine
-void drawAllPaths(const apmatrix<int> &matrix, ALLEGRO_BITMAP *pathsBitmap, ALLEGRO_BITMAP *bestBitmap);
+void drawAllPaths(const apmatrix<int> &matrix, ALGORITHM algo, ALLEGRO_BITMAP *pathsBitmap, ALLEGRO_BITMAP *bestBitmap);
 
 #endif  // INC_DRAW_HPP_

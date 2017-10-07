@@ -28,6 +28,11 @@ bool initAllegro() {
         return false;
     }
 
+    if (!al_install_mouse()) {
+        std::cerr << "Error initializing mouse" << std::endl;
+        return false;
+    }
+
     if (!al_init_primitives_addon()) {
         std::cerr << "Error initializing primitives addon" << std::endl;
         return false;
@@ -66,7 +71,7 @@ void drawMatrix(const apmatrix<int> &matrix, int min, int max) {
     }
 }
 
-std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row) {  /* NOLINT(whitespace/line_length) */
+std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row, ALGORITHM algo) {  /* NOLINT(whitespace/line_length) */
     // Colour to use to draw line
     ALLEGRO_COLOR colour = al_map_rgb(255, 0, 0);
     // Total change in elevation
@@ -82,60 +87,105 @@ std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row) 
     for (int x = 0; x < matrix.numcols() - 1; x++) {
         // Choose next row
 
-        // Forward difference
-        int fwd = std::abs(matrix[row][x + 1] - matrix[row][x]);
-        // Row last step
+        // Previous row
         int lastRow = row;
 
-        // At top
-        if (row == 0) {
-           // Downward difference
-           int dwn = std::abs(matrix[row + 1][x + 1] - matrix[row][x]);
-           // Go down if less change, forwards otherwise (row stays the same)
-           if (dwn < fwd) {
-               row++;
-           }
-        // At bottom
-        } else if (row == matrix.numrows() - 1) {
-            // Upward difference
-            int up = std::abs(matrix[row - 1][x + 1] - matrix[row][x]);
-            // Go up if less change, forwards otherwise (row stays the same)
-            if (up < fwd) {
-                row--;
-            }
-        // Somewhere in between
-        } else {
-            // Differences
-            int dwn = std::abs(matrix[row + 1][x + 1] - matrix[row][x]);
-            int up = std::abs(matrix[row - 1][x + 1] - matrix[row][x]);
-            // Any tie with forwards
-            if (dwn == fwd || up == fwd) {
-                // Go forwards (row stays the same)
-            // Up and down tie
-            } else if (dwn == up) {
-                switch (dist(mt)) {
-                    case 0:
-                        // Go up
-                        row--;
-                        break;
-                    case 1:
-                        // Go down
-                        row++;
-                        break;
-                    default:
-                        // This should never happen
-                        std::cerr << "Error picking random direction"
-                            << std::endl;
-                        break;
-                }
-            // No ties, just get smallest
-            } else {
-                if (up < fwd && up < dwn) {
-                    row--;
-                } else if (dwn < fwd) {
+        if (algo == NORMAL) {
+            // Forward difference
+            int fwd = std::abs(matrix[row][x] - matrix[row][x + 1]);
+            // At top
+            if (row == 0) {
+                // Downward difference
+                int dwn = std::abs(matrix[row][x] - matrix[row + 1][x + 1]);
+                if (dwn < fwd) {
                     row++;
                 }
-                // Otherwise go forwards (row stays the same)
+            // At bottom
+            } else if (row == matrix.numrows() - 1) {
+                // Upward difference
+                int up = std::abs(matrix[row][x] - matrix[row - 1][x + 1]);
+                if (up < fwd) {
+                    row--;
+                }
+            // Somewhere in between
+            } else {
+                // Differences
+                int dwn = std::abs(matrix[row][x] - matrix[row + 1][x + 1]);
+                int up = std::abs(matrix[row][x] - matrix[row - 1][x + 1]);
+
+                // All different
+                if (fwd != up && fwd != dwn && up != dwn) {
+                    // Go to smallest
+                    if (dwn < up && dwn < fwd) {
+                        row++;
+                    } else if (up < fwd && up < dwn) {
+                        row--;
+                    }
+                    // Otherwise we go forwards (row stays the same)
+                // Tie with forwards
+                } else if (fwd == up || fwd == dwn && up != dwn) {
+                    if (fwd < up && fwd < dwn) {
+                        // Go forwards (row stays the same)
+                    } else {
+                        // Go to lowest
+                        if (dwn < up && dwn < fwd) {
+                            row++;
+                        } else if (up < fwd && up < dwn) {
+                            row--;
+                        }
+                    }
+                // Tie between up and dwn
+                } else {
+                    // Choose random direction
+                    if (dist(mt) == 0) {
+                        // Up
+                        row--;
+                    } else {
+                        // Down
+                        row++;
+                    }
+                }
+            }
+        }  // normal algorithm
+
+        if (algo == DOWNHILL) {
+            // Forward elevation
+            int fwd = matrix[row][x + 1];
+            // At top
+            if (row == 0) {
+                int dwn = matrix[row + 1][x + 1];
+                if (dwn < fwd) {
+                    row++;
+                }
+            // At bottom
+            } else if (row == matrix.numrows() - 1) {
+                // Upwards elevation
+                int up = matrix[row - 1][x + 1];
+                if (up < fwd) {
+                    row--;
+                }
+            // Somewhere in between
+            } else {
+                // Get elevations
+                int fwd = matrix[row][x + 1];
+                int up = matrix[row - 1][x + 1];
+                int dwn = matrix[row + 1][x + 1];
+
+                // All different
+                if (fwd != up && fwd != dwn && up != dwn) {
+                    // Go to lowest elevation
+                    if (up < fwd && up < dwn) {
+                        // Go up
+                        row--;
+                    } else if (dwn < fwd && dwn < up) {
+                        // Go down
+                        row++;
+                    }
+                    // Otherwise we go forwards (row stays the same)
+                // Tie with forwards
+                } else if ()
+
+                
             }
         }
 
@@ -150,19 +200,19 @@ std::pair<int, std::vector<int>> drawPath(const apmatrix<int> &matrix, int row) 
     return std::make_pair(deltaElev, path);
 }
 
-void drawAllPaths(const apmatrix<int> &matrix, ALLEGRO_BITMAP *pathsBitmap, ALLEGRO_BITMAP *bestBitmap) {  /* NOLINT(whitespace/line_length) */
+void drawAllPaths(const apmatrix<int> &matrix, ALGORITHM algo, ALLEGRO_BITMAP *pathsBitmap, ALLEGRO_BITMAP *bestBitmap) {  /* NOLINT(whitespace/line_length) */
     // Set drawing target to paths bitmap
     al_set_target_bitmap(pathsBitmap);
 
     // Get delta elevation and path of first path
-    auto firstPath = drawPath(matrix, 0);
+    auto firstPath = drawPath(matrix, 0, algo);
     int min = firstPath.first;
     std::vector<int> shortest = firstPath.second;
 
     // Loop through remaining paths
     for (int i = 1; i < matrix.numrows(); i++) {
         // Get the pair returned by drawPath()
-        auto path = drawPath(matrix, i);
+        auto path = drawPath(matrix, i, algo);
         int curMin = path.first;
         std::vector<int> curPath = path.second;
         // Check if current elevation is lower than minimum

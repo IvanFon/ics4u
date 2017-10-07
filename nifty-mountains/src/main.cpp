@@ -4,20 +4,6 @@
  *  @author Ivan Fonseca
  */
 
-/**
- * @todo
- * - get path with least de (delta elevation)
- *  - keep track of de while doing all the paths
- *  - store every point for each, compare with current lowest de
- *  - basically the vector min thing
- * - create display before file picker so display can be parent
- * - create input for height and width
- * - add another algorithm
- * - add buttons to change what's drawn
- * - add loading and title text
- *  - load font
- */
-
 #include <iostream>
 #include <string>
 
@@ -53,19 +39,16 @@ int main() {
         return 1;
     }
 
-    // Get input file size
-    int mapWidth, mapHeight;
-    std::cout << "Enter input width: ";
-    std::cin >> mapWidth;
-    std::cout << "Enter input height: ";
-    std::cin >> mapHeight;
-
     // Read file into matrix
-    apmatrix<int> matrix(mapHeight, mapWidth, 0);
+    apmatrix<int> matrix(0, 0, 0);
     if (!readFile(filepath, matrix)) {
         std::cerr << "Error reading in file" << std::endl;
         return 1;
     }
+
+    // Get map dimensions
+    int mapWidth = matrix.numcols();
+    int mapHeight = matrix.numrows();
 
     // Get minimum and maximum values of matrix
     int mapMin = matrixMin(matrix);
@@ -105,10 +88,18 @@ int main() {
     }
 
     // Create bitmaps
-    ALLEGRO_BITMAP *mapBitmap = al_create_bitmap(mapWidth, mapHeight);
-    ALLEGRO_BITMAP *pathsBitmap = al_create_bitmap(mapWidth, mapHeight);
-    ALLEGRO_BITMAP *bestPathBitmap = al_create_bitmap(mapWidth, mapHeight);
-    if (!mapBitmap || !pathsBitmap || !bestPathBitmap) {
+    ALLEGRO_BITMAP *mapBitmap = al_create_bitmap(
+        mapWidth, mapHeight);
+    ALLEGRO_BITMAP *normalPathsBitmap = al_create_bitmap(
+        mapWidth, mapHeight);
+    ALLEGRO_BITMAP *normalBestPathBitmap = al_create_bitmap(
+        mapWidth, mapHeight);
+    ALLEGRO_BITMAP *downhillPathsBitmap = al_create_bitmap(
+        mapWidth, mapHeight);
+    ALLEGRO_BITMAP *downhillBestPathBitmap = al_create_bitmap(
+        mapWidth, mapHeight);
+    if (!mapBitmap || !normalPathsBitmap || !normalBestPathBitmap ||
+        !downhillPathsBitmap || !downhillBestPathBitmap) {
         std::cerr << "Error creating bitmaps" << std::endl;
         al_destroy_display(display);
         al_destroy_timer(timer);
@@ -119,6 +110,7 @@ int main() {
     // Event sources
     al_register_event_source(evQueue, al_get_display_event_source(display));
     al_register_event_source(evQueue, al_get_timer_event_source(timer));
+    al_register_event_source(evQueue, al_get_mouse_event_source());
 
     al_clear_to_color(al_map_rgb(0, 0, 0));
     al_flip_display();
@@ -131,9 +123,19 @@ int main() {
     // Set drawing target back to display
     al_set_target_bitmap(al_get_backbuffer(display));
 
-    // Draw paths and save to bitmap
-    drawAllPaths(matrix, pathsBitmap, bestPathBitmap);
+    // Draw paths with normal algorithm to bitmaps
+    drawAllPaths(matrix, NORMAL, normalPathsBitmap, normalBestPathBitmap);
+    // Draw paths with downhill algorithm to bitmaps
+    drawAllPaths(matrix, DOWNHILL, downhillPathsBitmap, downhillBestPathBitmap);
+    // Set drawing target back to main display
     al_set_target_bitmap(al_get_backbuffer(display));
+
+    // If we should draw map, paths and best paths
+    bool drawMap = true;
+    bool drawPaths = true;
+    bool drawBestPath = true;
+    // Current algorithm
+    ALGORITHM curAlgo = NORMAL;
 
     // Game loop
     bool running = true;
@@ -149,6 +151,11 @@ int main() {
             case ALLEGRO_EVENT_TIMER:
                 redraw = true;
                 break;
+            case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                // Handle button presses
+                checkButtons(event, curAlgo, mapWidth,
+                    drawMap, drawPaths, drawBestPath);
+                break;
         }
 
         // Draw
@@ -158,12 +165,28 @@ int main() {
             al_clear_to_color(al_map_rgb(0, 0, 0));
 
             // Draw map
-            al_draw_bitmap(mapBitmap, 0, titleHeight, 0);
+            if (drawMap) {
+                al_draw_bitmap(mapBitmap, 0, titleHeight, 0);
+            }
             // Draw paths
-            al_draw_bitmap(pathsBitmap, 0, titleHeight, 0);
-            al_draw_bitmap(bestPathBitmap, 0, titleHeight, 0);
+            if (drawPaths) {
+                if (curAlgo == NORMAL) {
+                    al_draw_bitmap(normalPathsBitmap, 0, titleHeight, 0);
+                } else {
+                    al_draw_bitmap(downhillPathsBitmap, 0, titleHeight, 0);
+                }
+            }
+            // Draw best path
+            if (drawBestPath) {
+                if (curAlgo == NORMAL) {
+                    al_draw_bitmap(normalBestPathBitmap, 0, titleHeight, 0);
+                } else {
+                    al_draw_bitmap(downhillBestPathBitmap, 0, titleHeight, 0);
+                }
+            }
 
-            drawUI(filename, mapWidth, mapHeight);
+            drawUI(filename, mapWidth, mapHeight, curAlgo,
+                drawMap, drawPaths, drawBestPath);
 
             al_flip_display();
         }

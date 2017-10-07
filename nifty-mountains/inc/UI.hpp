@@ -9,6 +9,8 @@
 
 #include <string>
 
+#include "Draw.hpp"
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -36,6 +38,11 @@ bool loadFonts();
 /// @param filename Name of file
 /// @param fileWidth Width of file
 /// @param fileHeight Height of file
-void drawUI(const std::string &filename, const int fileWidth, const int fileHeight);
+/// @param algo Current algorithm
+/// @param drawMap If the map should be drawn
+/// @param drawPaths If paths should be drawn
+/// @param drawBestPath If best path should be drawn
+void drawUI(const std::string &filename, const int fileWidth, const int fileHeight,
+    const ALGORITHM algo, const bool drawMap, const bool drawPaths, const bool drawBestPath);
 
 #endif  // INC_UI_HPP_
