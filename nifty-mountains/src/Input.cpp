@@ -64,7 +64,7 @@ bool readFile(const std::string &filename, apmatrix<int> &matrix) {
 }
 
 void checkButtons(const ALLEGRO_EVENT event, ALGORITHM &algo, int width,
-    bool &drawMap, bool &drawPaths, bool &drawBestPath) {
+    bool &drawMap, bool &mapColours, bool &drawPaths, bool &drawBestPath) {
     // Get mouse coordinates
     int x = event.mouse.x;
     int y = event.mouse.y;
@@ -93,17 +93,25 @@ void checkButtons(const ALLEGRO_EVENT event, ALGORITHM &algo, int width,
         drawMap = !drawMap;
     }
 
-    // Toggle paths button
+    // Toggle map colours button
     if (x > width + (settingsWidth / 2) + (settingsWidth / 16) &&
         x < width + settingsWidth - (settingsWidth / 16) &&
         y > titleHeight + 112 &&
         y < titleHeight + 168) {
+        mapColours = !mapColours;
+    }
+
+    // Toggle paths button
+    if (x > width + (settingsWidth / 16) &&
+        x < width + (settingsWidth / 2) - (settingsWidth / 16) &&
+        y > titleHeight + 192 &&
+        y < titleHeight + 248) {
         drawPaths = !drawPaths;
     }
 
     // Toggle best path button
-    if (x > width + (settingsWidth / 16) &&
-        x < width + (settingsWidth / 2) - (settingsWidth / 16) &&
+    if (x > width + (settingsWidth / 2) + (settingsWidth / 16) &&
+        x < width + settingsWidth - (settingsWidth / 16) &&
         y > titleHeight + 192 &&
         y < titleHeight + 248) {
         drawBestPath = !drawBestPath;

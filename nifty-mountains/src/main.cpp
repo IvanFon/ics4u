@@ -90,6 +90,8 @@ int main() {
     // Create bitmaps
     ALLEGRO_BITMAP *mapBitmap = al_create_bitmap(
         mapWidth, mapHeight);
+    ALLEGRO_BITMAP *colouredMapBitmap = al_create_bitmap(
+        mapWidth, mapHeight);
     ALLEGRO_BITMAP *normalPathsBitmap = al_create_bitmap(
         mapWidth, mapHeight);
     ALLEGRO_BITMAP *normalBestPathBitmap = al_create_bitmap(
@@ -119,7 +121,9 @@ int main() {
 
     // Draw map and save to bitmap
     al_set_target_bitmap(mapBitmap);
-    drawMatrix(matrix, mapMin, mapMax);
+    drawMatrix(matrix, mapMin, mapMax, false);
+    al_set_target_bitmap(colouredMapBitmap);
+    drawMatrix(matrix, mapMin, mapMax, true);
     // Set drawing target back to display
     al_set_target_bitmap(al_get_backbuffer(display));
 
@@ -132,6 +136,7 @@ int main() {
 
     // If we should draw map, paths and best paths
     bool drawMap = true;
+    bool mapColours = false;
     bool drawPaths = true;
     bool drawBestPath = true;
     // Current algorithm
@@ -154,7 +159,7 @@ int main() {
             case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 // Handle button presses
                 checkButtons(event, curAlgo, mapWidth,
-                    drawMap, drawPaths, drawBestPath);
+                    drawMap, mapColours, drawPaths, drawBestPath);
                 break;
         }
 
@@ -166,7 +171,11 @@ int main() {
 
             // Draw map
             if (drawMap) {
-                al_draw_bitmap(mapBitmap, 0, titleHeight, 0);
+                if (mapColours) {
+                    al_draw_bitmap(colouredMapBitmap, 0, titleHeight, 0);
+                } else {
+                    al_draw_bitmap(mapBitmap, 0, titleHeight, 0);
+                }
             }
             // Draw paths
             if (drawPaths) {
@@ -186,7 +195,7 @@ int main() {
             }
 
             drawUI(filename, mapWidth, mapHeight, curAlgo,
-                drawMap, drawPaths, drawBestPath);
+                drawMap, mapColours, drawPaths, drawBestPath);
 
             al_flip_display();
         }

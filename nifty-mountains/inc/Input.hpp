@@ -27,8 +27,10 @@ bool readFile(const std::string &filename, apmatrix<int> &matrix);
 /// @param algo Algorithm to use
 /// @param width Width of map
 /// @param drawMap If map should be drawn
+/// @param mapColours Draw map colours
 /// @param drawPaths If paths should be drawn
 /// @param drawBestPath If best path should be drawn
-void checkButtons(const ALLEGRO_EVENT event, ALGORITHM &algo, int width, bool &drawMap, bool &drawPaths, bool &drawBestPath);
+void checkButtons(const ALLEGRO_EVENT event, ALGORITHM &algo, int width,
+    bool &drawMap, bool &mapColours, bool &drawPaths, bool &drawBestPath);
 
 #endif // INC_INPUT_HPP_

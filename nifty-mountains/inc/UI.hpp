@@ -43,6 +43,7 @@ bool loadFonts();
 /// @param drawPaths If paths should be drawn
 /// @param drawBestPath If best path should be drawn
 void drawUI(const std::string &filename, const int fileWidth, const int fileHeight,
-    const ALGORITHM algo, const bool drawMap, const bool drawPaths, const bool drawBestPath);
+    const ALGORITHM algo, const bool drawMap, const bool mapColours,
+    const bool drawPaths, const bool drawBestPath);
 
 #endif  // INC_UI_HPP_

@@ -27,7 +27,8 @@ bool initAllegro();
 /// @brief Draw a matrix
 /// @param matrix Matrix to draw
 /// @param min,max Minimum and maximum values of matrix
-void drawMatrix(const apmatrix<int> &matrix, int min, int max);
+/// @param colour If we should colour the map
+void drawMatrix(const apmatrix<int> &matrix, int min, int max, bool colour);
 
 /// @brief Draws lowest elevation path
 /// @param matrix Matrix to draw from
