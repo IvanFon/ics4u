@@ -13,7 +13,7 @@ const int STACK_SIZE = 20;
 
 /// @brief Stack class
 class Stack {
-private:
+protected:
     /// @brief Top of stack
     int top;
     /// @brief Array storing stack
@@ -21,10 +21,6 @@ private:
 public:
     /// @brief Create an empty stack
     Stack();
-
-    /// @brief Get top position of stack
-    /// @return Top of stack
-    int getTop();
 
     /// @brief Check if stack is empty
     /// @return True if empty, false otherwise

@@ -16,6 +16,9 @@ public:
     /// @brief Create empty RPN calculator stack
     RPNStack();
 
+    /// @brief Get top value from stack without popping it
+    double display();
+
     /// @brief Pop top two items off stack and push the sum
     void add();
 

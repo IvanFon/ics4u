@@ -12,9 +12,13 @@
 
 RPNStack::RPNStack(): Stack() { }
 
+double RPNStack::display() {
+    return stack[top];
+}
+
 void RPNStack::add() {
     // Check if there are at least two items
-    if (getTop() >= 1) {
+    if (top >= 1) {
         double b = pop(), a = pop();
         push(a + b);
     } else {
@@ -24,7 +28,7 @@ void RPNStack::add() {
 
 void RPNStack::sub() {
     // Check if there are at least two items
-    if (getTop() >= 1) {
+    if (top >= 1) {
         double b = pop(), a = pop();
         push(a - b);
     } else {
@@ -34,7 +38,7 @@ void RPNStack::sub() {
 
 void RPNStack::mul() {
     // Check if there are at least two items
-    if (getTop() >= 1) {
+    if (top >= 1) {
         double b = pop(), a = pop();
         push(a * b);
     } else {
@@ -44,7 +48,7 @@ void RPNStack::mul() {
 
 void RPNStack::div() {
     // Check if there are at least two items
-    if (getTop() >= 1) {
+    if (top >= 1) {
         double b = pop(), a = pop();
         push(a / b);
     } else {
@@ -54,7 +58,7 @@ void RPNStack::div() {
 
 void RPNStack::pow() {
     // Check if there are at least two items
-    if (getTop() >= 1) {
+    if (top >= 1) {
         double b = pop(), a = pop();
         push(std::pow(a, b));
     } else {

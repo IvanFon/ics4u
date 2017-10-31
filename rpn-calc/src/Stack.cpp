@@ -14,10 +14,6 @@ Stack::Stack(): top(-1) {
     std::fill(stack, stack + STACK_SIZE, 0);
 }
 
-int Stack::getTop() {
-    return top;
-}
-
 bool Stack::isEmpty() {
     return (top < 0);
 }

@@ -19,7 +19,7 @@ int main() {
     stack.div();
     stack.add();
 
-    std::cout << stack.pop() << std::endl;
+    std::cout << stack.display() << std::endl;
 
     return 0;
 }
