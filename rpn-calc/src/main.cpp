@@ -1,15 +1,25 @@
 #include <iostream>
 
-#include "Stack.hpp"
+#include "RPNStack.hpp"
 
 int main() {
-    Stack stack;
+    RPNStack stack;
 
+    stack.push(3);
+    stack.push(4);
+    stack.push(2);
+    stack.mul();
+    stack.push(1);
     stack.push(5);
-    stack.push(7);
-    stack.push(1.2);
+    stack.sub();
+    stack.push(2);
+    stack.push(3);
+    stack.pow();
+    stack.pow();
+    stack.div();
+    stack.add();
 
-    double t = stack.pop();
+    std::cout << stack.pop() << std::endl;
 
     return 0;
 }

@@ -22,6 +22,10 @@ public:
     /// @brief Create an empty stack
     Stack();
 
+    /// @brief Get top position of stack
+    /// @return Top of stack
+    int getTop();
+
     /// @brief Check if stack is empty
     /// @return True if empty, false otherwise
     bool isEmpty();
