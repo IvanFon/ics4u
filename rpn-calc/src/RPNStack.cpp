@@ -99,7 +99,7 @@ void RPNStack::root() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
-        push(std::sqrt(a, 1.0 / b));
+        push(std::pow(a, 1.0 / b));
     } else {
         std::cerr << "Error: stack must have at least two items" << std::endl;
     }
