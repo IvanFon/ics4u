@@ -10,11 +10,16 @@
 
 #include "Stack.hpp"
 
+#include <vector>
+
 /// @brief RPN calculator stack class
 class RPNStack : public Stack {
 public:
     /// @brief Create empty RPN calculator stack
     RPNStack();
+
+    /// @brief Get top index of stack
+    int getTop();
 
     /// @brief Get top value from stack without popping it
     double display();

@@ -9,11 +9,21 @@
 
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 RPNStack::RPNStack(): Stack() { }
 
+int RPNStack::getTop() {
+    return top;
+}
+
 double RPNStack::display() {
-    return stack[top];
+    if (top >= 0) {
+        return stack[top];
+    } else {
+        std::cerr << "Error: stack has no items, can't display" << std::endl;
+        return 0;
+    }
 }
 
 void RPNStack::add() {

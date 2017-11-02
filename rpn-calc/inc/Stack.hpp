@@ -33,6 +33,9 @@ public:
     /// @brief Pop the top item from the stack
     /// @return Popped item from stack
     double pop();
+
+    /// @brief Clear the stack
+    void clear();
 };
 
 #endif  // INC_STACK_HPP_
