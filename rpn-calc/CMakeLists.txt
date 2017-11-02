@@ -48,5 +48,5 @@ target_link_libraries(${PROJECT_NAME}
 # Copy resources
 file(COPY
   ${PROJECT_SOURCE_DIR}/res/
-  DESTINATION ${CMAKE_BINARY_DIR}
+  DESTINATION ${CMAKE_BINARY_DIR}/res/
 )
