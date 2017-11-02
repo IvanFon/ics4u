@@ -5,6 +5,8 @@
  * @copyright GPL-3.0
  */
 
+/// @todo add fifth column buttons
+
 #include "UI.hpp"
 
 #include <iostream>
@@ -29,11 +31,11 @@ const Vector btnSize = *(new Vector(70, 75));
 const int dispHeight = 125;
 // Text
 const std::vector<std::vector<std::string>> btnText = {
-    { "C", "AC", "+/-", "÷" },
-    { "7", "8", "9", "×" },
-    { "4", "5", "6", "−" },
-    { "1", "2", "3", "+" },
-    { "0", ".", "%", "=" }
+    { "C", "AC", "del", "÷", "x^y" },
+    { "7", "8", "9", "×", "y√x" },
+    { "4", "5", "6", "−", "pop" },
+    { "1", "2", "3", "+", "swap" },
+    { "0", ".", "+/-", "=", "" }
 };
 
 void drawUI(RPNStack stack, const std::string &curIn) {
@@ -43,18 +45,14 @@ void drawUI(RPNStack stack, const std::string &curIn) {
     std::stringstream stackDisplay;
     stackDisplay << "Stack: ";
     if (stack.getTop() >= 0) {
-        /// @todo AAA just put this whole thing in the not here and see if it works
-        int x = stack.getTop();
-        while (x --> 0) {
-            stackDisplay << stack.pop() << ", ";
-        }
+        stackDisplay << stack.displayAll();
     } else {
         stackDisplay << "empty";
     }
     al_draw_text(medFont, COL_MED_TEXT, 20, 15, 0, stackDisplay.str().c_str());
 
     // Draw current input
-    al_draw_text(bigFont, COL_WHITE, screen.x - 25, 75,
+    al_draw_text(bigFont, COL_WHITE, screen.x - 25, 75 - smallFontHeight,
         ALLEGRO_ALIGN_RIGHT, curIn.c_str());
 }
 
@@ -64,7 +62,7 @@ void drawButtons() {
 
     // Button grid
     // Vertical lines
-    for (int i = 1; i <= (numBtns.x - 1); i++) {
+    for (int i = 1; i <= (numBtns.x); i++) {
         al_draw_line(i * 70, 0, i * 70, screen.y, COL_BACK, 2);
     }
     // Horizontal lines
@@ -74,8 +72,8 @@ void drawButtons() {
     }
 
     // Button text
-    for (int y = 0; y < btnText.size(); y++) {
-        for (int x = 0; x < btnText[y].size(); x++) {
+    for (unsigned int y = 0; y < btnText.size(); y++) {
+        for (unsigned int x = 0; x < btnText[y].size(); x++) {
             // Choose text colour and font
             ALLEGRO_COLOR colour = COL_WHITE;
             ALLEGRO_FONT *font = smallFont;
@@ -94,8 +92,8 @@ void drawButtons() {
 void clickButton(RPNStack &stack, std::string &curIn,
     bool &negative, const Vector &pos) {
     // Loop through buttons
-    for (int y = 0; y < btnText.size(); y++) {
-        for (int x = 0; x < btnText[y].size(); x++) {
+    for (int y = 0; y < int(btnText.size()); y++) {
+        for (int x = 0; x < int(btnText[y].size()); x++) {
             // Check if this button was pressed
             if (pos.x >= (x * btnSize.x) &&
                 pos.x <= (x * btnSize.x) + btnSize.x &&
@@ -111,15 +109,11 @@ void clickButton(RPNStack &stack, std::string &curIn,
                             case 1:
                                 // AC
                                 stack.clear();
+                                curIn = "";
                                 break;
                             case 2:
-                                // +/-
-                                negative = !negative;
-                                if (negative) {
-                                    curIn = "-" + curIn;
-                                } else {
-                                    curIn.erase(0, 1);
-                                }
+                                // Del
+                                curIn = curIn.substr(0, curIn.length() - 1);
                                 break;
                             case 3:
                                 // /
@@ -198,8 +192,13 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 curIn += ".";
                                 break;
                             case 2:
-                                // %
-                                /// @todo
+                                // +/-
+                                negative = !negative;
+                                if (negative) {
+                                    curIn = "-" + curIn;
+                                } else {
+                                    curIn.erase(0, 1);
+                                }
                                 break;
                             case 3:
                                 // =

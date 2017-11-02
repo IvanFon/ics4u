@@ -8,9 +8,10 @@
 #ifndef INC_RPNSTACK_HPP_
 #define INC_RPNSTACK_HPP_
 
-#include "Stack.hpp"
-
+#include <string>
 #include <vector>
+
+#include "Stack.hpp"
 
 /// @brief RPN calculator stack class
 class RPNStack : public Stack {
@@ -19,10 +20,16 @@ public:
     RPNStack();
 
     /// @brief Get top index of stack
+    /// @return Index of top of stack
     int getTop();
 
     /// @brief Get top value from stack without popping it
+    /// @return Top item of stack
     double display();
+
+    /// @brief Get all items from stack as a string
+    /// @return Stack as a string of comma separated values
+    std::string displayAll();
 
     /// @brief Pop top two items off stack and push the sum
     void add();
@@ -38,6 +45,9 @@ public:
 
     /// @brief Pop top two items off stack and push the product
     void pow();
+
+    /// @brief Pop top two items off stack and push the root
+    void root();
 };
 
 #endif  // INC_RPNSTACK_HPP_

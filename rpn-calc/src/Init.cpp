@@ -27,7 +27,7 @@ ALLEGRO_FONT *medFont = nullptr;
 ALLEGRO_FONT *bigFont = nullptr;
 int smallFontHeight;
 
-Vector screen = *(new Vector(280, 500));
+Vector screen = *(new Vector(350, 500));
 
 bool initAllegro() {
     if (!al_init()) {

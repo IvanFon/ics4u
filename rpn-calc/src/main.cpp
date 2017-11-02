@@ -79,5 +79,7 @@ int main() {
         }
     }
 
+    destroyAllego();
+
     return 0;
 }

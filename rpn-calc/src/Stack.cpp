@@ -10,9 +10,7 @@
 #include <algorithm>
 #include <iostream>
 
-Stack::Stack(): top(-1) {
-    std::fill(stack, stack + STACK_SIZE, 0);
-}
+Stack::Stack(): top(-1) { }
 
 bool Stack::isEmpty() {
     return (top < 0);
@@ -30,16 +28,18 @@ void Stack::push(double c) {
 }
 
 double Stack::pop() {
+    double res;
     if (!isEmpty()) {
+        res = stack[top];
         top--;
-        return stack[top];
     } else {
         std::cerr << "Error: can't pop item from empty stack" << std::endl;
-        return 0.0;
+        res = 0;
     }
+
+    return res;
 }
 
 void Stack::clear() {
     top = -1;
-    std::fill(stack, stack + STACK_SIZE, 0);
 }
