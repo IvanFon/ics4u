@@ -11,8 +11,9 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
 
 #include "Colours.hpp"
 #include "Vector.hpp"
@@ -57,6 +58,12 @@ bool initAllegro() {
 
     if (!al_init_primitives_addon()) {
         std::cerr << "Error initializing Allegro primitives addon" << std::endl;
+        return false;
+    }
+
+    if (!al_init_native_dialog_addon()) {
+        std::cerr << "Error initializing Allegro native dialog addon"
+            << std::endl;
         return false;
     }
 

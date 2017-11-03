@@ -32,22 +32,32 @@ public:
     std::string displayAll();
 
     /// @brief Pop top two items off stack and push the sum
-    void add();
+    /// @return True on success, false otherwise
+    bool add();
 
     /// @brief Pop top two items off stack and push the difference
-    void sub();
+    /// @return True on success, false otherwise
+    bool sub();
 
     /// @brief Pop top two items off stack and push the product
-    void mul();
+    /// @return True on success, false otherwise
+    bool mul();
 
     /// @brief Pop top two items off stack and push the quotient
-    void div();
+    /// @return True on success, false otherwise
+    bool div();
 
     /// @brief Pop top two items off stack and push the product
-    void pow();
+    /// @return True on success, false otherwise
+    bool pow();
 
     /// @brief Pop top two items off stack and push the root
-    void root();
+    /// @return True on success, false otherwise
+    bool root();
+
+    /// @brief Swap top two stack items
+    /// @return True on success, false otherwise
+    bool swap();
 };
 
 #endif  // INC_RPNSTACK_HPP_

@@ -20,6 +20,7 @@ public:
     Vector();
 
     /// @brief Create vector at given coordinates
+    /// @param x,y Coordinates
     Vector(int x, int y);
 };
 

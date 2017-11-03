@@ -5,10 +5,9 @@
  * @copyright GPL-3.0
  */
 
-/// @todo add fifth column buttons
-
 #include "UI.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -16,6 +15,7 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
+#include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "Colours.hpp"
@@ -23,23 +23,30 @@
 #include "RPNStack.hpp"
 #include "Vector.hpp"
 
-// Number of buttons
-const Vector numBtns = *(new Vector(4, 5));
 // Button size
 const Vector btnSize = *(new Vector(70, 75));
 // Display height
 const int dispHeight = 125;
 // Text
 const std::vector<std::vector<std::string>> btnText = {
-    { "C", "AC", "del", "÷", "x^y" },
-    { "7", "8", "9", "×", "y√x" },
+    { "C", "AC", "del", "÷", "a^b" },
+    { "7", "8", "9", "×", "√a" },
     { "4", "5", "6", "−", "pop" },
     { "1", "2", "3", "+", "swap" },
-    { "0", ".", "+/-", "=", "" }
+    { "0", ".", "+/-", "=1", "=2" }
 };
+// Button mouse over fade
+std::vector<std::vector<double>> btnFade(
+    btnText.size(), std::vector<double>(btnText[0].size(), 0.0));
+// Amount of fade
+const unsigned short fadeAmnt = 75;
+// Fade speed
+const unsigned short fadeSpd = 1;
+// Number of buttons
+const Vector numBtns = *(new Vector(btnText.size(), btnText[0].size()));
 
-void drawUI(RPNStack stack, const std::string &curIn) {
-    drawButtons();
+void drawUI(RPNStack stack, const std::string &curIn, const Vector &pos) {
+    drawButtons(pos);
 
     // Draw stack
     std::stringstream stackDisplay;
@@ -56,11 +63,10 @@ void drawUI(RPNStack stack, const std::string &curIn) {
         ALLEGRO_ALIGN_RIGHT, curIn.c_str());
 }
 
-void drawButtons() {
+void drawButtons(const Vector &pos) {
     // Button background
     al_draw_filled_rectangle(0, 126, screen.x, screen.y, COL_FORE);
 
-    // Button grid
     // Vertical lines
     for (int i = 1; i <= (numBtns.x); i++) {
         al_draw_line(i * 70, 0, i * 70, screen.y, COL_BACK, 2);
@@ -69,6 +75,39 @@ void drawButtons() {
     for (int i = 1; i <= (numBtns.y - 1); i++) {
         al_draw_line(0, dispHeight + (i * 75), screen.x,  dispHeight + (i * 75),
             COL_BACK, 2);
+    }
+
+    double enterFade = std::min(btnFade[4][3], btnFade[4][4]);
+    if (enterFade != 0)
+        std::cout << enterFade << std::endl;
+
+    // Button fade
+    for (int y = 0; y < numBtns.y; y++) {
+        for (int x = 0; x < numBtns.x; x++) {
+            // Check if mouse is on button
+            if (pos.x >= (x * btnSize.x) &&
+            pos.x <= (x * btnSize.x) + btnSize.x &&
+            pos.y >= (y * btnSize.y) + dispHeight &&
+            pos.y <= (y * btnSize.y) + btnSize.y + dispHeight) {
+                btnFade[y][x] = fadeAmnt;
+            }
+            if (btnFade[y][x] != 0) {
+                // Choose colour
+                ALLEGRO_COLOR tmpFadeCol = al_map_rgb(
+                    COL_FORE_R * btnFade[y][x] / 100,
+                    COL_FORE_G * btnFade[y][x] / 100,
+                    COL_FORE_B * btnFade[y][x] / 100);
+                al_draw_filled_rectangle(
+                    x * btnSize.x, dispHeight + (y * btnSize.y),
+                    (x * btnSize.x) + btnSize.x,
+                    dispHeight + (y * btnSize.y) + btnSize.y,
+                    tmpFadeCol);
+                // Fade back
+                if (btnFade[y][x] < 100.0) {
+                    btnFade[y][x] += fadeSpd;
+                }
+            }
+        }
     }
 
     // Button text
@@ -85,6 +124,25 @@ void drawButtons() {
                 (btnSize.x * x) + (btnSize.x / 2),
                 dispHeight + (btnSize.y * y) + smallFontHeight,
                 ALLEGRO_ALIGN_CENTER, btnText[y][x].c_str());
+            // Enter button
+            if (btnText[y][x] == "=2") {
+                if (enterFade < 100.0) {
+                    enterFade += fadeSpd;
+                }
+                ALLEGRO_COLOR tmpFadeCol = al_map_rgb(
+                    COL_FORE_R * enterFade / 100,
+                    COL_FORE_G * enterFade / 100,
+                    COL_FORE_B * enterFade / 100);
+                al_draw_filled_rectangle(
+                    (x - 1) * btnSize.x, dispHeight + (y * btnSize.y),
+                    (x + 1) * btnSize.x,
+                    dispHeight + (y * btnSize.y) + btnSize.y,
+                    tmpFadeCol);
+                al_draw_text(font, colour,
+                    btnSize.x * x,
+                    dispHeight + (y * btnSize.y) + smallFontHeight,
+                    ALLEGRO_ALIGN_CENTER, "Enter");
+            }
         }
     }
 }
@@ -117,7 +175,13 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 break;
                             case 3:
                                 // /
-                                stack.div();
+                                if (!stack.div()) {
+                                    showError("Stack must have at least two items to divide"); /* NOLINT(whitespace/line_length) */
+                                }
+                                break;
+                            case 4:
+                                // a^b
+                                stack.pow();
                                 break;
                         }
                         break;
@@ -137,7 +201,13 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 break;
                             case 3:
                                 // x
-                                stack.mul();
+                                if (!stack.mul()) {
+                                    showError("Stack must have at least two items to multiply"); /* NOLINT(whitespace/line_length) */
+                                }
+                                break;
+                            case 4:
+                                // b sqrt a
+                                stack.root();
                                 break;
                         }
                         break;
@@ -157,7 +227,13 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 break;
                             case 3:
                                 // -
-                                stack.sub();
+                                if (!stack.sub()) {
+                                    showError("Stack must have at least two items to subtract"); /* NOLINT(whitespace/line_length) */
+                                }
+                                break;
+                            case 4:
+                                // pop
+                                curIn = std::to_string(stack.pop());
                                 break;
                         }
                         break;
@@ -177,7 +253,13 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 break;
                             case 3:
                                 // +
-                                stack.add();
+                                if (!stack.add()) {
+                                    showError("Stack must have at least two items to add"); /* NOLINT(whitespace/line_length) */
+                                }
+                                break;
+                            case 4:
+                                // swap
+                                stack.swap();
                                 break;
                         }
                         break;
@@ -201,9 +283,10 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 }
                                 break;
                             case 3:
+                            case 4:
                                 // =
                                 // Check if input isn't empty
-                                if (curIn != "") {
+                                if (curIn != "" || curIn != "-") {
                                     stack.push(std::stod(curIn));
                                     curIn = "";
                                 }
@@ -214,4 +297,9 @@ void clickButton(RPNStack &stack, std::string &curIn,
             }
         }
     }
+}
+
+void showError(const std::string &message) {
+    al_show_native_message_box(display, "Error", "", message.c_str(), NULL,
+        ALLEGRO_MESSAGEBOX_ERROR);
 }

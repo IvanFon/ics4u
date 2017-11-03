@@ -18,8 +18,13 @@ extern ALLEGRO_COLOR COL_BLACK;
 extern ALLEGRO_COLOR COL_RED;
 /// @brief Background colour
 extern ALLEGRO_COLOR COL_BACK;
+/// @{
 /// @brief Foreground colour
 extern ALLEGRO_COLOR COL_FORE;
+extern unsigned short COL_FORE_R;
+extern unsigned short COL_FORE_G;
+extern unsigned short COL_FORE_B;
+/// @}
 /// @brief Medium text colour
 extern ALLEGRO_COLOR COL_MED_TEXT;
 

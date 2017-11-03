@@ -74,7 +74,7 @@ int main() {
         if (redraw && al_event_queue_is_empty(evQueue)) {
             redraw = false;
             al_clear_to_color(COL_BACK);
-            drawUI(stack, curIn);
+            drawUI(stack, curIn, Vector(event.mouse.x, event.mouse.y));
             al_flip_display();
         }
     }

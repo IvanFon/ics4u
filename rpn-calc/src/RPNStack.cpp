@@ -44,63 +44,80 @@ std::string RPNStack::displayAll() {
     }
 }
 
-void RPNStack::add() {
+bool RPNStack::add() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
         push(a + b);
-    } else {
-        std::cerr << "Error: stack must have at least two items" << std::endl;
+        return true;
     }
+
+    return false;
 }
 
-void RPNStack::sub() {
+bool RPNStack::sub() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
         push(a - b);
-    } else {
-        std::cerr << "Error: stack must have at least two items" << std::endl;
+        return true;
     }
+
+    return false;
 }
 
-void RPNStack::mul() {
+bool RPNStack::mul() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
         push(a * b);
-    } else {
-        std::cerr << "Error: stack must have at least two items" << std::endl;
+        return true;
     }
+
+    return false;
 }
 
-void RPNStack::div() {
+bool RPNStack::div() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
         push(a / b);
-    } else {
-        std::cerr << "Error: stack must have at least two items" << std::endl;
+        return true;
     }
+
+    return false;
 }
 
-void RPNStack::pow() {
+bool RPNStack::pow() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
         push(std::pow(a, b));
-    } else {
-        std::cerr << "Error: stack must have at least two items" << std::endl;
+        return true;
     }
+
+    return false;
 }
 
-void RPNStack::root() {
-    /// @todo check if this works
+bool RPNStack::root() {
+    // Check if there are at least two items
+    if (top >= 0) {
+        double a = pop();
+        push(std::sqrt(a));
+        return true;
+    }
+
+    return false;
+}
+
+bool RPNStack::swap() {
     // Check if there are at least two items
     if (top >= 1) {
         double b = pop(), a = pop();
-        push(std::pow(a, 1.0 / b));
-    } else {
-        std::cerr << "Error: stack must have at least two items" << std::endl;
+        push(b);
+        push(a);
+        return true;
     }
+
+    return false;
 }

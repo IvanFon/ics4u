@@ -16,10 +16,12 @@
 /// @brief Draw user interface
 /// @param stack Stack to draw
 /// @param curIn Current input
-void drawUI(RPNStack stack, const std::string &curIn);
+/// @param pos Position of mouse
+void drawUI(RPNStack stack, const std::string &curIn, const Vector &pos);
 
 /// @brief Draw buttons
-void drawButtons();
+/// @param pos Mouse position
+void drawButtons(const Vector &pos);
 
 /// @brief Handle button clicks
 /// @param stack Stack to operate on
@@ -28,6 +30,10 @@ void drawButtons();
 /// @param pos Mouse position
 void clickButton(RPNStack &stack, std::string &curIn,
     bool &negative, const Vector &pos);
+
+/// @brief Show an error message
+/// @param message Message to display
+void showError(const std::string &message);
 
 #endif  // INC_UI_HPP_
 
