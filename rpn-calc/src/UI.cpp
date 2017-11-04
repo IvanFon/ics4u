@@ -5,8 +5,6 @@
  * @copyright GPL-3.0
  */
 
-/// @todo use current input instead of two from top of stack
-
 #include "UI.hpp"
 
 #include <algorithm>
