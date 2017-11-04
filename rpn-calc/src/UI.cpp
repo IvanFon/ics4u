@@ -5,6 +5,8 @@
  * @copyright GPL-3.0
  */
 
+/// @todo use current input instead of two from top of stack
+
 #include "UI.hpp"
 
 #include <algorithm>
@@ -30,23 +32,26 @@ const int dispHeight = 125;
 // Text
 const std::vector<std::vector<std::string>> btnText = {
     { "C", "AC", "del", "÷", "a^b" },
-    { "7", "8", "9", "×", "√a" },
+    { "7", "8", "9", "×", "b√a" },
     { "4", "5", "6", "−", "pop" },
     { "1", "2", "3", "+", "swap" },
     { "0", ".", "+/-", "=1", "=2" }
 };
 // Button mouse over fade
 std::vector<std::vector<double>> btnFade(
-    btnText.size(), std::vector<double>(btnText[0].size(), 0.0));
+    btnText.size(), std::vector<double>(btnText[0].size(), 100.0));
 // Amount of fade
-const unsigned short fadeAmnt = 75;
+const unsigned short fadeAmnt = 90;
+// Amount of fade when clicked
+const unsigned short clickFadeAmnt = 75;
 // Fade speed
 const unsigned short fadeSpd = 1;
 // Number of buttons
 const Vector numBtns = *(new Vector(btnText.size(), btnText[0].size()));
 
-void drawUI(RPNStack stack, const std::string &curIn, const Vector &pos) {
-    drawButtons(pos);
+void drawUI(RPNStack stack, const std::string &curIn,
+    const Vector &pos, const bool mousePressed) {
+    drawButtons(pos, mousePressed);
 
     // Draw stack
     std::stringstream stackDisplay;
@@ -59,11 +64,11 @@ void drawUI(RPNStack stack, const std::string &curIn, const Vector &pos) {
     al_draw_text(medFont, COL_MED_TEXT, 20, 15, 0, stackDisplay.str().c_str());
 
     // Draw current input
-    al_draw_text(bigFont, COL_WHITE, screen.x - 25, 75 - smallFontHeight,
+    al_draw_text(bigFont, COL_WHITE, screen.x - 25, 85 - smallFontHeight,
         ALLEGRO_ALIGN_RIGHT, curIn.c_str());
 }
 
-void drawButtons(const Vector &pos) {
+void drawButtons(const Vector &pos, const bool mousePressed) {
     // Button background
     al_draw_filled_rectangle(0, 126, screen.x, screen.y, COL_FORE);
 
@@ -77,9 +82,8 @@ void drawButtons(const Vector &pos) {
             COL_BACK, 2);
     }
 
+    // Get enter button fade
     double enterFade = std::min(btnFade[4][3], btnFade[4][4]);
-    if (enterFade != 0)
-        std::cout << enterFade << std::endl;
 
     // Button fade
     for (int y = 0; y < numBtns.y; y++) {
@@ -89,9 +93,9 @@ void drawButtons(const Vector &pos) {
             pos.x <= (x * btnSize.x) + btnSize.x &&
             pos.y >= (y * btnSize.y) + dispHeight &&
             pos.y <= (y * btnSize.y) + btnSize.y + dispHeight) {
-                btnFade[y][x] = fadeAmnt;
+                btnFade[y][x] = (mousePressed) ? clickFadeAmnt : fadeAmnt;
             }
-            if (btnFade[y][x] != 0) {
+            if (btnFade[y][x] != 100) {
                 // Choose colour
                 ALLEGRO_COLOR tmpFadeCol = al_map_rgb(
                     COL_FORE_R * btnFade[y][x] / 100,
@@ -126,9 +130,6 @@ void drawButtons(const Vector &pos) {
                 ALLEGRO_ALIGN_CENTER, btnText[y][x].c_str());
             // Enter button
             if (btnText[y][x] == "=2") {
-                if (enterFade < 100.0) {
-                    enterFade += fadeSpd;
-                }
                 ALLEGRO_COLOR tmpFadeCol = al_map_rgb(
                     COL_FORE_R * enterFade / 100,
                     COL_FORE_G * enterFade / 100,
@@ -157,6 +158,8 @@ void clickButton(RPNStack &stack, std::string &curIn,
                 pos.x <= (x * btnSize.x) + btnSize.x &&
                 pos.y >= (y * btnSize.y) + dispHeight &&
                 pos.y <= (y * btnSize.y) + btnSize.y + dispHeight) {
+                // Fade
+                btnFade[y][x] = clickFadeAmnt;
                 switch (y) {
                     case 0:
                         switch (x) {
@@ -233,7 +236,11 @@ void clickButton(RPNStack &stack, std::string &curIn,
                                 break;
                             case 4:
                                 // pop
+                                if (stack.getTop())
                                 curIn = std::to_string(stack.pop());
+                                if (curIn[0] == '-') {
+                                    negative = true;
+                                }
                                 break;
                         }
                         break;

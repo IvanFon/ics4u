@@ -74,7 +74,14 @@ int main() {
         if (redraw && al_event_queue_is_empty(evQueue)) {
             redraw = false;
             al_clear_to_color(COL_BACK);
-            drawUI(stack, curIn, Vector(event.mouse.x, event.mouse.y));
+            // Get mouse position
+            ALLEGRO_MOUSE_STATE mouseState;
+            al_get_mouse_state(&mouseState);
+            // Draw UI
+            drawUI(stack, curIn, Vector(
+                al_get_mouse_state_axis(&mouseState, 0),
+                al_get_mouse_state_axis(&mouseState, 1)),
+                al_mouse_button_down(&mouseState, 1));
             al_flip_display();
         }
     }

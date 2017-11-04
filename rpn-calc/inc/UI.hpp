@@ -17,11 +17,14 @@
 /// @param stack Stack to draw
 /// @param curIn Current input
 /// @param pos Position of mouse
-void drawUI(RPNStack stack, const std::string &curIn, const Vector &pos);
+/// @param mousePressed If the left mouse button is pressed
+void drawUI(RPNStack stack, const std::string &curIn,
+    const Vector &pos, const bool mousePressed);
 
 /// @brief Draw buttons
 /// @param pos Mouse position
-void drawButtons(const Vector &pos);
+/// @param mousePressed If the left mouse button is pressed
+void drawButtons(const Vector &pos, const bool mousePressed);
 
 /// @brief Handle button clicks
 /// @param stack Stack to operate on

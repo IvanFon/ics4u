@@ -10,7 +10,6 @@
 
 #include <allegro5/allegro.h>
 
-/// @{
 /// @brief White
 extern ALLEGRO_COLOR COL_WHITE;
 /// @brief Black
@@ -28,7 +27,6 @@ extern unsigned short COL_FORE_B;
 /// @}
 /// @brief Medium text colour
 extern ALLEGRO_COLOR COL_MED_TEXT;
-/// @}
 
 /// @brief Load colours
 void loadColours();

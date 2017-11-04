@@ -102,8 +102,8 @@ bool RPNStack::pow() {
 bool RPNStack::root() {
     // Check if there are at least two items
     if (top >= 0) {
-        double a = pop();
-        push(std::sqrt(a));
+        double b = pop(), a = pop();
+        push(std::pow(a, (1 / b)));
         return true;
     }
 
