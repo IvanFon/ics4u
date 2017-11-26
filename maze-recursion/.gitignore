@@ -3,3 +3,8 @@ build/
 
 # documentation output
 doc/
+
+# global
+GPATH
+GRTAGS
+GTAGS
