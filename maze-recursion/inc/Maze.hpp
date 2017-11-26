@@ -17,7 +17,7 @@ class Maze {
     /// @brief Maze matrix
     std::vector<std::vector<char>> maze;
 
-    /// @brief
+    /// @brief Load a maze
     /// @param filename File to load
     Maze(const std::string &filename);
 };
